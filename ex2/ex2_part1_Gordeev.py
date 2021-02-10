@@ -5,7 +5,7 @@ import numpy.linalg as LA
 from cdo import *
 import os
 
-class CDF:
+class PDF:
     def __init__(self,means,variances,covmat):
         self.means = means
         self.variances = variances
@@ -20,15 +20,15 @@ class CDF:
         return xvect
 
 
-    def get_CDF_value(self,xi):
+    def get_PDF_value(self,xi):
         covmat=self.covmat
         covmat_inv=LA.inv(covmat)
         diffvect=xi-self.means
         D=np.dot(np.dot(diffvect,covmat_inv),diffvect)
         D
-        CDF_value=np.exp(-D)/(2*np.pi*np.sqrt(LA.det(covmat)))
+        PDF_value=np.exp(-D)/(2*np.pi*np.sqrt(LA.det(covmat)))
 
-        return CDF_value
+        return PDF_value
 
     def get_meshgrid(self):
         x1=self.get_xvect(means[0],variances[0])
@@ -40,18 +40,18 @@ class CDF:
 
         return meshgrid
 
-    def calc_CDF_arr(self):
+    def calc_PDF_arr(self):
         meshgrid=self.get_meshgrid()
         len_x1,len_x2=meshgrid.shape[:-1]
         cdf_arr=np.zeros([len_x1,len_x2])
         for i in range(len_x1):
             for j in range(len_x2):
-                cdf_arr[i,j]=self.get_CDF_value(meshgrid[i,j])
+                cdf_arr[i,j]=self.get_PDF_value(meshgrid[i,j])
 
         return cdf_arr
 
-    def plot_CDF_arr(self):
-        cdf_arr=self.calc_CDF_arr()
+    def plot_PDF_arr(self):
+        cdf_arr=self.calc_PDF_arr()
         fig=plt.figure(figsize=(12,10))
         plt.xlabel('X1')
         plt.ylabel('X2')
@@ -87,7 +87,7 @@ plt.xlabel('longitude')
 plt.ylabel('lattitude')
 plt.colorbar()
 plt.show()
-ds_arr.head
+
 
 # Assign Rejkavik and Lisbon grid cell indices
 Rx_ind,Ry_ind=5,4
@@ -114,7 +114,7 @@ variances=np.array([RSLP_variance,LSLP_variance])
 covmat=np.array([[RSLP_variance,RSLP_covariance],[RSLP_covariance,LSLP_variance]])
 covmat
 
-CDF_obj1=CDF(means,variances,covmat)
+PDF_obj1=PDF(means,variances,covmat)
 means[0]
 
-CDF_obj1.plot_CDF_arr()
+PDF_obj1.plot_PDF_arr()
